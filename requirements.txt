@@ -8,3 +8,4 @@ openai
 anthropic
 langchain-community
 langchain-openai
+PyYAML

@@ -12,4 +12,4 @@ class OpenRouterWrapper:
             temperature=0.7,
             openai_api_base=self.base_url,
         )
-        return llm.invoke(prompt).content
+        return str(llm.invoke(prompt).content)

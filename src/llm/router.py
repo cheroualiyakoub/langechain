@@ -98,23 +98,15 @@ class LLMRouter:
         
         for path in possible_paths:
             try:
-                print(f"DEBUG: Trying to load config from: {path}")
                 if os.path.exists(path):
-                    print(f"DEBUG: Config file exists at: {path}")
                     with open(path, 'r') as f:
                         config = yaml.safe_load(f) or {}
-                        print(f"DEBUG: Loaded config: {config}")
                         # Expand environment variables
                         expanded_config = self._expand_env_vars(config)
-                        print(f"DEBUG: Expanded config: {expanded_config}")
                         return expanded_config
-                else:
-                    print(f"DEBUG: Config file not found at: {path}")
             except Exception as e:
-                print(f"DEBUG: Error loading config from {path}: {e}")
                 continue
         
-        print("DEBUG: No config file found, using empty config")
         return {}
 
     def _expand_env_vars(self, obj):
@@ -140,8 +132,6 @@ class LLMRouter:
         """Resolve model alias to actual model name"""
         aliases = self.config.get("model_aliases", {})
         resolved = aliases.get(model, model)
-        print(f"DEBUG: Resolving alias '{model}' -> '{resolved}'")
-        print(f"DEBUG: Available aliases: {aliases}")
         return resolved
 
     def get_available_aliases(self) -> Dict[str, str]:

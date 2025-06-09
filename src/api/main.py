@@ -10,7 +10,6 @@ app = FastAPI()
 
 client = LLMRouter(model="gpt4")
 
-
 class ChatRequest(BaseModel):
     message: str
     model: str = None

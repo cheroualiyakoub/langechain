@@ -9,3 +9,4 @@ anthropic
 langchain-community
 langchain-openai
 PyYAML
+jupyterlab

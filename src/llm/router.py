@@ -9,13 +9,16 @@ class LLMRouter:
     def __init__(self, provider: str = None, model: str = None, api_key: str = None, base_url: str = None, config_path: str = None):
         self.config = self._load_config(config_path or "config/model_config.yaml")
         
-        if provider and model:
+        # Resolve model alias if provided
+        resolved_model = self._resolve_model_alias(model) if model else model
+        
+        if provider and resolved_model:
             # Direct specification
             self.provider = provider.lower()
-            self.model = model
-        elif model:
+            self.model = resolved_model
+        elif resolved_model:
             # Auto-detect from model name
-            self.provider, self.model = self._detect_provider_from_model(model)
+            self.provider, self.model = self._detect_provider_from_model(resolved_model)
         else:
             raise ValueError("Either provider+model or just model must be specified")
         
@@ -51,14 +54,16 @@ class LLMRouter:
     def ask_with_model(self, prompt: str, model: str = None) -> str:
         """Ask with a specific model, auto-switching provider if needed"""
         if model and model != self.model:
+            # Resolve alias for the requested model
+            resolved_model = self._resolve_model_alias(model)
             old_provider = self.provider
             old_model = self.model
             try:
-                new_provider, _ = self._detect_provider_from_model(model)
+                new_provider, _ = self._detect_provider_from_model(resolved_model)
                 if new_provider != self.provider:
-                    self.switch_provider(new_provider, model)
+                    self.switch_provider(new_provider, resolved_model)
                 else:
-                    self.model = model
+                    self.model = resolved_model
                 return self.ask(prompt)
             finally:
                 # Restore original provider/model if changed
@@ -69,27 +74,48 @@ class LLMRouter:
 
     def _detect_provider_from_model(self, model: str) -> Tuple[str, str]:
         """Auto-detect provider based on model name patterns"""
-        if model.startswith(("gpt-", "text-", "code-")):
+        # OpenAI models - updated pattern to be more specific
+        if model.startswith(("gpt-", "text-", "code-", "davinci", "curie", "babbage", "ada")) or model in ["gpt-4.1-nano", "gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"]:
             return "openai", model
-        elif model.startswith("claude-"):
+        # Anthropic models  
+        elif model.startswith(("claude-", "claude")):
             return "anthropic", model
-        elif "/" in model:  # OpenRouter format: provider/model
+        # OpenRouter format: provider/model
+        elif "/" in model:
             return "openrouter", model
         else:
             raise ValueError(f"Cannot detect provider for model: {model}")
 
     def _load_config(self, config_path: str) -> Dict[str, Any]:
         """Load configuration from YAML file"""
-        try:
-            with open(config_path, 'r') as f:
-                config = yaml.safe_load(f) or {}
-                # Expand environment variables
-                return self._expand_env_vars(config)
-        except FileNotFoundError:
-            return {}
-        except Exception as e:
-            print(f"Warning: Could not load config from {config_path}: {e}")
-            return {}
+        # Try multiple possible config paths
+        possible_paths = [
+            config_path,
+            "/app/config/model_config.yaml",  # Docker container path
+            "config/model_config.yaml",       # Relative path
+            os.path.join(os.path.dirname(__file__), "../../config/model_config.yaml")  # Relative to router.py
+        ]
+        
+        for path in possible_paths:
+            try:
+                print(f"DEBUG: Trying to load config from: {path}")
+                if os.path.exists(path):
+                    print(f"DEBUG: Config file exists at: {path}")
+                    with open(path, 'r') as f:
+                        config = yaml.safe_load(f) or {}
+                        print(f"DEBUG: Loaded config: {config}")
+                        # Expand environment variables
+                        expanded_config = self._expand_env_vars(config)
+                        print(f"DEBUG: Expanded config: {expanded_config}")
+                        return expanded_config
+                else:
+                    print(f"DEBUG: Config file not found at: {path}")
+            except Exception as e:
+                print(f"DEBUG: Error loading config from {path}: {e}")
+                continue
+        
+        print("DEBUG: No config file found, using empty config")
+        return {}
 
     def _expand_env_vars(self, obj):
         """Recursively expand environment variables in config"""
@@ -109,5 +135,17 @@ class LLMRouter:
             "anthropic": AnthropicWrapper,
             "openrouter": OpenRouterWrapper,
         }
+
+    def _resolve_model_alias(self, model: str) -> str:
+        """Resolve model alias to actual model name"""
+        aliases = self.config.get("model_aliases", {})
+        resolved = aliases.get(model, model)
+        print(f"DEBUG: Resolving alias '{model}' -> '{resolved}'")
+        print(f"DEBUG: Available aliases: {aliases}")
+        return resolved
+
+    def get_available_aliases(self) -> Dict[str, str]:
+        """Get all available model aliases"""
+        return self.config.get("model_aliases", {})
 
 

@@ -7,7 +7,7 @@ services:
     volumes:
       - chroma_data:/data
 
-  api:
+  langchain_api:
     build: .
     container_name: langchain_api
     image: langchain_api
@@ -19,6 +19,19 @@ services:
       - vector_db
     volumes:
       - ./src:/app/src
+      - .:/app
+    command: uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+    environment:
+      - ENV=dev
+  
+  notebook:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app/notebooks
+    ports:
+      - "8888:8888"
+    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
 
 volumes:
   chroma_data:

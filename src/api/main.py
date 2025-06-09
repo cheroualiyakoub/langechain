@@ -8,8 +8,8 @@ load_dotenv()
 
 app = FastAPI()
 
-# Initialize with auto-detection - now you can just specify a model!
-client = LLMRouter(model="gpt-4.1-nano")  # Auto-detects OpenAI provider
+client = LLMRouter(model="gpt4")
+
 
 class ChatRequest(BaseModel):
     message: str

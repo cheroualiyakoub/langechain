@@ -1,11 +1,11 @@
-# Makefile pour PatentMuse
+# Makefile for PatentMuse
 .PHONY: start up down logs urls status clean help check-services
 
 # Variables
 COMPOSE_FILE = docker-compose.yaml
 HOST = localhost
 
-# Couleurs pour l'affichage
+# Colors for display
 GREEN = \033[0;32m
 RED = \033[0;31m
 BLUE = \033[0;34m
@@ -13,19 +13,19 @@ YELLOW = \033[1;33m
 CYAN = \033[0;36m
 NC = \033[0m # No Color
 
-# Commande principale - Lance docker-compose et affiche les URLs avec vérification de statut
+# Main command - Launches docker-compose and displays URLs with status check
 start:
-	@echo "$(CYAN)🚀 Démarrage de PatentMuse...$(NC)"
+	@echo "$(CYAN)🚀 Starting PatentMuse...$(NC)"
 	@echo "$(YELLOW)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	docker-compose -f $(COMPOSE_FILE) up -d
-	@echo "$(YELLOW)⏳ Attente du démarrage des services...$(NC)"
+	@echo "$(YELLOW)⏳ Waiting for services to start...$(NC)"
 	@sleep 8
 	@make check-services
 	@make urls
 
-# Vérification du statut des services avec affichage coloré
+# Service status check with colored output
 check-services:
-	@echo "\n$(CYAN)🔍 Vérification du statut des services...$(NC)"
+	@echo "\n$(CYAN)🔍 Checking service status...$(NC)"
 	@echo "$(BLUE)┌─────────────────────────────────────────────────────────┐$(NC)"
 	@if curl -s http://$(HOST):8000/health > /dev/null 2>&1; then \
 		echo "$(BLUE)│$(NC) $(GREEN)✅ Langchain API$(NC)     $(GREEN)[ONLINE]$(NC)  Port 8000    $(BLUE)│$(NC)"; \
@@ -44,170 +44,176 @@ check-services:
 	fi
 	@echo "$(BLUE)└─────────────────────────────────────────────────────────┘$(NC)"
 
-# Affiche les URLs de tous les services avec style amélioré
+# Display all service URLs with improved style
 urls:
-	@echo "\n$(GREEN)🌐 URLs des services PatentMuse$(NC)"
+	@echo "\n$(GREEN)🌐 PatentMuse service URLs$(NC)"
 	@echo "$(YELLOW)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@echo "$(CYAN)┌─────────────────────────────────────────────────────────┐$(NC)"
 	@echo "$(CYAN)│$(NC) $(GREEN)🔗 Langchain API:$(NC)     http://$(HOST):8000         $(CYAN)│$(NC)"
 	@echo "$(CYAN)│$(NC) $(GREEN)📊 Chroma Vector DB:$(NC)  http://$(HOST):8001         $(CYAN)│$(NC)"
-	@echo "$(CYAN)│$(NC) $(GREEN)📓 Jupyter Lab:$(NC)       http://$(HOST):8888         $(CYAN)│$(NC)"
+	@JUPYTER_TOKEN=$$(docker logs patentmuse-notebook-1 2>&1 | grep -o 'token=[a-f0-9]*' | head -1 | cut -d'=' -f2 2>/dev/null); \
+	if [ -n "$$JUPYTER_TOKEN" ]; then \
+		echo "$(CYAN)│$(NC) $(GREEN)📓 Jupyter Lab:$(NC)       http://$(HOST):8888/lab?token=$$JUPYTER_TOKEN $(CYAN)│$(NC)"; \
+	else \
+		echo "$(CYAN)│$(NC) $(GREEN)📓 Jupyter Lab:$(NC)       http://$(HOST):8888         $(CYAN)│$(NC)"; \
+		echo "$(CYAN)│$(NC) $(YELLOW)  ⚠️  Token not found - check logs$(NC)              $(CYAN)│$(NC)"; \
+	fi
 	@echo "$(CYAN)└─────────────────────────────────────────────────────────┘$(NC)"
-	@echo "\n$(YELLOW)🎯 Endpoints API utiles :$(NC)"
+	@echo "\n$(YELLOW)🎯 Useful API endpoints:$(NC)"
 	@echo "  $(GREEN)•$(NC) Health check:    http://$(HOST):8000/health"
 	@echo "  $(GREEN)•$(NC) Chat endpoint:   http://$(HOST):8000/chat"
 	@echo "  $(GREEN)•$(NC) Providers:       http://$(HOST):8000/providers"
 	@echo "  $(GREEN)•$(NC) Chroma docs:     http://$(HOST):8001/docs"
 	@echo "$(YELLOW)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo "$(GREEN)✨ PatentMuse est prêt ! Bon travail ! ✨$(NC)\n"
+	@echo "$(GREEN)✨ PatentMuse is ready! Happy coding! ✨$(NC)\n"
 
-# Alias pour la commande start (rétrocompatibilité)
+# Alias for start command (backward compatibility)
 up: start
 
-# Arrête tous les services avec confirmation
+# Stop all services with confirmation
 down:
-	@echo "$(RED)🛑 Arrêt de PatentMuse...$(NC)"
+	@echo "$(RED)🛑 Stopping PatentMuse...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) down
-	@echo "$(YELLOW)✅ Tous les services ont été arrêtés$(NC)"
+	@echo "$(YELLOW)✅ All services have been stopped$(NC)"
 
-# Affiche les logs en temps réel avec couleurs
+# Display real-time logs with colors
 logs:
-	@echo "$(CYAN)📋 Logs en temps réel...$(NC)"
+	@echo "$(CYAN)📋 Real-time logs...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) logs -f
 
-# Affiche le statut des conteneurs avec style
+# Display container status with style
 status:
-	@echo "$(GREEN)📊 Statut des conteneurs PatentMuse$(NC)"
+	@echo "$(GREEN)📊 PatentMuse container status$(NC)"
 	@echo "$(YELLOW)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	docker-compose -f $(COMPOSE_FILE) ps
 
-# Reconstruction complète des images
+# Complete image rebuild
 rebuild:
-	@echo "$(YELLOW)🔄 Reconstruction complète de PatentMuse...$(NC)"
+	@echo "$(YELLOW)🔄 Complete PatentMuse rebuild...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) down
 	docker-compose -f $(COMPOSE_FILE) build --no-cache
-	@echo "$(GREEN)✅ Images reconstruites$(NC)"
+	@echo "$(GREEN)✅ Images rebuilt$(NC)"
 	@make start
 
-# Nettoyage complet
+# Complete cleanup
 clean:
-	@echo "$(RED)🧹 Nettoyage complet de PatentMuse...$(NC)"
+	@echo "$(RED)🧹 Complete PatentMuse cleanup...$(NC)"
 	@echo "$(YELLOW)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	
-	# Arrêt des conteneurs Docker (garde les volumes)
-	@echo "$(CYAN)🐳 Arrêt des conteneurs Docker...$(NC)"
+	# Stop Docker containers (keep volumes)
+	@echo "$(CYAN)🐳 Stopping Docker containers...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) down --remove-orphans 2>/dev/null || true
 	
-	# Nettoyage des images Docker orphelines uniquement
-	@echo "$(CYAN)🗑️  Nettoyage images Docker orphelines...$(NC)"
+	# Clean orphaned Docker images only
+	@echo "$(CYAN)🗑️  Cleaning orphaned Docker images...$(NC)"
 	docker image prune -f 2>/dev/null || true
 	
-	# Suppression des fichiers Python compilés
-	@echo "$(CYAN)🐍 Nettoyage Python...$(NC)"
+	# Remove compiled Python files
+	@echo "$(CYAN)🐍 Python cleanup...$(NC)"
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	find . -type f -name "*.pyo" -delete 2>/dev/null || true
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
 	
-	# Suppression des fichiers temporaires
-	@echo "$(CYAN)🗑️  Nettoyage fichiers temporaires...$(NC)"
+	# Remove temporary files
+	@echo "$(CYAN)🗑️  Cleaning temporary files...$(NC)"
 	find . -type f -name "*.tmp" -delete 2>/dev/null || true
 	find . -type f -name "*.temp" -delete 2>/dev/null || true
 	find . -type f -name "*.swp" -delete 2>/dev/null || true
 	find . -type f -name "*.swo" -delete 2>/dev/null || true
 	find . -type f -name "*~" -delete 2>/dev/null || true
 	
-	# Suppression des fichiers macOS
-	@echo "$(CYAN)🍎 Nettoyage macOS...$(NC)"
+	# Remove macOS files
+	@echo "$(CYAN)🍎 macOS cleanup...$(NC)"
 	find . -name ".DS_Store" -delete 2>/dev/null || true
 	find . -name ".DS_Store?" -delete 2>/dev/null || true
 	find . -name "._*" -delete 2>/dev/null || true
 	
-	# Suppression des logs
-	@echo "$(CYAN)📋 Nettoyage logs...$(NC)"
+	# Remove logs
+	@echo "$(CYAN)📋 Log cleanup...$(NC)"
 	find . -type f -name "*.log" -delete 2>/dev/null || true
 	rm -rf logs/ 2>/dev/null || true
 	
-	# Suppression des checkpoints Jupyter
-	@echo "$(CYAN)📓 Nettoyage Jupyter...$(NC)"
+	# Remove Jupyter checkpoints
+	@echo "$(CYAN)📓 Jupyter cleanup...$(NC)"
 	find . -type d -name ".ipynb_checkpoints" -exec rm -rf {} + 2>/dev/null || true
 	
-	# Suppression des caches Python
-	@echo "$(CYAN)💾 Nettoyage caches...$(NC)"
+	# Remove Python caches
+	@echo "$(CYAN)💾 Cache cleanup...$(NC)"
 	rm -rf .pytest_cache/ 2>/dev/null || true
 	rm -rf .mypy_cache/ 2>/dev/null || true
 	rm -rf .ruff_cache/ 2>/dev/null || true
 	rm -rf .cache/ 2>/dev/null || true
 	
-	# Suppression des fichiers de sauvegarde
-	@echo "$(CYAN)💽 Nettoyage sauvegardes...$(NC)"
+	# Remove backup files
+	@echo "$(CYAN)💽 Backup cleanup...$(NC)"
 	find . -name "*.backup" -delete 2>/dev/null || true
 	find . -name "*.bak" -delete 2>/dev/null || true
 	find . -name "*.orig" -delete 2>/dev/null || true
 	
 	@echo "$(YELLOW)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo "$(GREEN)✅ Nettoyage terminé ! Volumes Docker préservés$(NC)"
+	@echo "$(GREEN)✅ Cleanup completed! Docker volumes preserved$(NC)"
 
-# Nettoyage complet avec suppression des volumes (DANGER)
+# Complete cleanup with volume removal (DANGER)
 clean-all:
-	@echo "$(RED)⚠️  ATTENTION: Nettoyage complet avec suppression des volumes!$(NC)"
-	@echo "$(RED)Ceci supprimera définitivement vos données Chroma!$(NC)"
-	@read -p "Êtes-vous sûr? [y/N] " -n 1 -r; \
+	@echo "$(RED)⚠️  WARNING: Complete cleanup with volume removal!$(NC)"
+	@echo "$(RED)This will permanently delete your Chroma data!$(NC)"
+	@read -p "Are you sure? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		echo "$(RED)🧹 Nettoyage complet avec volumes...$(NC)"; \
+		echo "$(RED)🧹 Complete cleanup with volumes...$(NC)"; \
 		docker-compose -f $(COMPOSE_FILE) down -v --remove-orphans 2>/dev/null || true; \
 		docker system prune -af 2>/dev/null || true; \
 		make clean; \
-		echo "$(GREEN)✅ Nettoyage complet terminé$(NC)"; \
+		echo "$(GREEN)✅ Complete cleanup finished$(NC)"; \
 	else \
-		echo "$(YELLOW)❌ Nettoyage annulé$(NC)"; \
+		echo "$(YELLOW)❌ Cleanup cancelled$(NC)"; \
 	fi
 
-# Nettoyage léger (garde Docker)
+# Light cleanup (keep Docker)
 clean-light:
-	@echo "$(YELLOW)🧽 Nettoyage léger de PatentMuse...$(NC)"
+	@echo "$(YELLOW)🧽 Light PatentMuse cleanup...$(NC)"
 	
-	# Suppression des fichiers Python compilés
+	# Remove compiled Python files
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	
-	# Suppression des fichiers temporaires
+	# Remove temporary files
 	find . -type f -name "*.tmp" -delete 2>/dev/null || true
 	find . -name ".DS_Store" -delete 2>/dev/null || true
 	find . -type d -name ".ipynb_checkpoints" -exec rm -rf {} + 2>/dev/null || true
 	
-	@echo "$(GREEN)✅ Nettoyage léger terminé$(NC)"
+	@echo "$(GREEN)✅ Light cleanup completed$(NC)"
 
-# Redémarre les services
+# Restart services
 restart:
-	@echo "$(YELLOW)🔄 Redémarrage de PatentMuse...$(NC)"
+	@echo "$(YELLOW)🔄 Restarting PatentMuse...$(NC)"
 	@make down
 	@sleep 2
 	@make start
 
-# Test rapide des services
+# Quick service test
 test:
-	@echo "$(CYAN)🧪 Test des services PatentMuse...$(NC)"
+	@echo "$(CYAN)🧪 Testing PatentMuse services...$(NC)"
 	@make check-services
 
-# Affiche l'aide avec style
+# Display help with style
 help:
-	@echo "$(GREEN)📖 Commandes PatentMuse disponibles$(NC)"
+	@echo "$(GREEN)📖 Available PatentMuse commands$(NC)"
 	@echo "$(YELLOW)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo "  $(GREEN)make start$(NC)      - $(CYAN)Lance tous les services et affiche les URLs$(NC)"
-	@echo "  $(GREEN)make down$(NC)       - $(CYAN)Arrête tous les services$(NC)"
-	@echo "  $(GREEN)make urls$(NC)       - $(CYAN)Affiche les URLs des services$(NC)"
-	@echo "  $(GREEN)make test$(NC)       - $(CYAN)Vérifie le statut des services$(NC)"
-	@echo "  $(GREEN)make logs$(NC)       - $(CYAN)Affiche les logs en temps réel$(NC)"
-	@echo "  $(GREEN)make status$(NC)     - $(CYAN)Affiche le statut des conteneurs$(NC)"
-	@echo "  $(GREEN)make rebuild$(NC)    - $(CYAN)Reconstruit et relance les services$(NC)"
-	@echo "  $(GREEN)make restart$(NC)    - $(CYAN)Redémarre tous les services$(NC)"
-	@echo "  $(GREEN)make clean$(NC)      - $(CYAN)Nettoyage sécurisé (préserve volumes)$(NC)"
-	@echo "  $(GREEN)make clean-all$(NC)  - $(CYAN)Nettoyage complet + volumes (DANGER)$(NC)"
-	@echo "  $(GREEN)make clean-light$(NC) - $(CYAN)Nettoyage léger (fichiers temporaires)$(NC)"
-	@echo "  $(GREEN)make help$(NC)       - $(CYAN)Affiche cette aide$(NC)"
+	@echo "  $(GREEN)make start$(NC)      - $(CYAN)Launch all services and display URLs$(NC)"
+	@echo "  $(GREEN)make down$(NC)       - $(CYAN)Stop all services$(NC)"
+	@echo "  $(GREEN)make urls$(NC)       - $(CYAN)Display service URLs$(NC)"
+	@echo "  $(GREEN)make test$(NC)       - $(CYAN)Check service status$(NC)"
+	@echo "  $(GREEN)make logs$(NC)       - $(CYAN)Display real-time logs$(NC)"
+	@echo "  $(GREEN)make status$(NC)     - $(CYAN)Display container status$(NC)"
+	@echo "  $(GREEN)make rebuild$(NC)    - $(CYAN)Rebuild and restart services$(NC)"
+	@echo "  $(GREEN)make restart$(NC)    - $(CYAN)Restart all services$(NC)"
+	@echo "  $(GREEN)make clean$(NC)      - $(CYAN)Safe cleanup (preserve volumes)$(NC)"
+	@echo "  $(GREEN)make clean-all$(NC)  - $(CYAN)Complete cleanup + volumes (DANGER)$(NC)"
+	@echo "  $(GREEN)make clean-light$(NC) - $(CYAN)Light cleanup (temporary files)$(NC)"
+	@echo "  $(GREEN)make help$(NC)       - $(CYAN)Display this help$(NC)"
 	@echo "$(YELLOW)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 
-# Commande par défaut
+# Default command
 .DEFAULT_GOAL := start

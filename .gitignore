@@ -193,57 +193,6 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-# Docker
-.dockerignore
-docker-compose.override.yml
-.docker/
-
-# macOS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Temporary files
-*.tmp
-*.temp
-*.swp
-*.swo
-*~
-
-# Logs
-logs/
-*.log
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# IDE files
-.idea/
-*.sublime-project
-*.sublime-workspace
-
-# OS generated files
-.directory
-.fuse_hidden*
-
-# AI/ML specific
-model_cache/
-.wandb/
-mlruns/
-
-# Chroma vector database
-chroma_data/
-
-# Backup files
-*.backup
-*.bak
-*.orig
 
 __pycache__/
 *.pyc

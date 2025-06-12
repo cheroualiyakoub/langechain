@@ -51,7 +51,13 @@ urls:
 	@echo "$(CYAN)┌─────────────────────────────────────────────────────────┐$(NC)"
 	@echo "$(CYAN)│$(NC) $(GREEN)🔗 Langchain API:$(NC)     http://$(HOST):8000         $(CYAN)│$(NC)"
 	@echo "$(CYAN)│$(NC) $(GREEN)📊 Chroma Vector DB:$(NC)  http://$(HOST):8001         $(CYAN)│$(NC)"
-	@echo "$(CYAN)│$(NC) $(GREEN)📓 Jupyter Lab:$(NC)       http://$(HOST):8888         $(CYAN)│$(NC)"
+	@JUPYTER_TOKEN=$$(docker logs patentmuse-notebook-1 2>&1 | grep -o 'token=[a-f0-9]*' | head -1 | cut -d'=' -f2 2>/dev/null); \
+	if [ -n "$$JUPYTER_TOKEN" ]; then \
+		echo "$(CYAN)│$(NC) $(GREEN)📓 Jupyter Lab:$(NC)       http://$(HOST):8888/lab?token=$$JUPYTER_TOKEN $(CYAN)│$(NC)"; \
+	else \
+		echo "$(CYAN)│$(NC) $(GREEN)📓 Jupyter Lab:$(NC)       http://$(HOST):8888         $(CYAN)│$(NC)"; \
+		echo "$(CYAN)│$(NC) $(YELLOW)  ⚠️  Token not found - check logs$(NC)              $(CYAN)│$(NC)"; \
+	fi
 	@echo "$(CYAN)└─────────────────────────────────────────────────────────┘$(NC)"
 	@echo "\n$(YELLOW)🎯 Useful API endpoints:$(NC)"
 	@echo "  $(GREEN)•$(NC) Health check:    http://$(HOST):8000/health"

@@ -10,3 +10,6 @@ langchain-community
 langchain-openai
 PyYAML
 jupyterlab
+lxml
+PyMuPDF
+pandas

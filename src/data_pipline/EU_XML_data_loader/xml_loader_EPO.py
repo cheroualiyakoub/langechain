@@ -601,7 +601,7 @@ def process_xml_files_list(xml_file_paths, debug=False):
     for i, xml_path in enumerate(xml_file_paths, 1):
         try:
             # Convert raw path to processed path
-            processed_path = convert_raw_to_processed_path(xml_path)
+            processed_path = convert_raw_to_parced_path(xml_path)
             
             # Create output directory if it doesn't exist
             output_dir = os.path.dirname(processed_path)
@@ -634,28 +634,28 @@ def process_xml_files_list(xml_file_paths, debug=False):
     print(f"  • Total files: {len(xml_file_paths)}")
 
 
-def convert_raw_to_processed_path(raw_xml_path):
+def convert_raw_to_parced_path(raw_xml_path):
     """
-    Convert a raw XML file path to the corresponding processed JSON file path.
+    Convert a raw XML file path to the corresponding parced JSON file path.
     
     Args:
         raw_xml_path: Path like ../data/raw/EPO/EPRTBJV.../folder/file.xml
         
     Returns:
-        Processed path like ../data/processed/EPO/EPRTBJV.../folder/file.json
+        parced path like ../data/parced/EPO/EPRTBJV.../folder/file.json
     """
     # Convert to Path object for easier manipulation
     from pathlib import Path
     
     raw_path = Path(raw_xml_path)
     
-    # Replace 'raw' with 'processed' in the path
+    # Replace 'raw' with 'parced' in the path
     path_parts = list(raw_path.parts)
     
-    # Find and replace 'raw' with 'processed'
+    # Find and replace 'raw' with 'parced'
     for i, part in enumerate(path_parts):
         if part == 'raw':
-            path_parts[i] = 'processed'
+            path_parts[i] = 'parced'
             break
     
     # Change extension from .xml to .json

@@ -1,0 +1,133 @@
+{
+  "bibliographic_data": {
+    "doc_id": "EP23111222A1",
+    "file": "EP23111222NWA1.xml",
+    "language": "en",
+    "country": "EP",
+    "doc_number": "4098765",
+    "kind_code": "A1",
+    "correction_code": null,
+    "publication_date": "20250630",
+    "status": "n",
+    "dtd_version": "ep-patent-document-v1-7",
+    "document_type": "EUROPEAN PATENT APPLICATION",
+    "kind": "A1",
+    "publication_date_full": "20250630",
+    "application_number": "23111222.1",
+    "application_date": "20230925",
+    "corrigendum_bulletin": {
+      "date": "20250630",
+      "bulletin_number": "202526"
+    },
+    "publication_bulletin": {
+      "date": "20250630",
+      "bulletin_number": "202526"
+    },
+    "ipc_classes": [
+      "A61B   5/00        20060101AFI20241210BHEP",
+      "G16H  50/20        20180101ALI20241210BHEP"
+    ],
+    "title": {
+      "de": "TRAGBARES MEDIZINISCHES ÜBERWACHUNGSGERÄT MIT KI-GESTÜTZTER DIAGNOSTIK",
+      "en": "WEARABLE MEDICAL MONITORING DEVICE WITH AI-POWERED DIAGNOSTICS",
+      "fr": "DISPOSITIF MÉDICAL PORTABLE DE SURVEILLANCE AVEC DIAGNOSTICS ALIMENTÉS PAR IA"
+    },
+    "inventors": [
+      {
+        "name": "PATEL, Rajesh",
+        "address": {
+          "city": "Mumbai 400001",
+          "country": "IN"
+        }
+      },
+      {
+        "name": "ANDERSON, Sarah",
+        "address": {
+          "city": "Boston, MA 02101",
+          "country": "US"
+        }
+      }
+    ],
+    "representatives": [
+      {
+        "name": "MedTech IP Associates",
+        "id": "105678901",
+        "address": {
+          "street": "Gesundheitsplatz 18",
+          "city": "10117 Berlin",
+          "country": "DE"
+        }
+      }
+    ],
+    "designated_states": [
+      "AT", "BE", "CH", "DE", "ES", "FR", "GB", "IE", "IT", "NL", "SE", "US", "CA", "JP"
+    ],
+    "abstract": "The present invention relates to a wearable medical monitoring device that combines multiple biosensors with artificial intelligence algorithms for continuous health monitoring and early disease detection. The device includes sensors for heart rate, blood pressure, blood oxygen saturation, body temperature, and electrocardiogram monitoring. An integrated AI processor analyzes the collected data in real-time to detect anomalies, predict health events, and provide personalized health recommendations. The system features wireless connectivity for data transmission to healthcare providers, emergency alert capabilities, and a user-friendly mobile application for health tracking and medication reminders."
+  },
+  "main_sections": [
+    {
+      "heading_id": "h0001",
+      "heading_text": "TECHNICAL FIELD",
+      "paragraphs": [
+        {
+          "p_id": "p0001",
+          "p_number": "0001",
+          "text": "The present invention relates to the field of medical devices and healthcare technology, specifically to wearable monitoring systems that integrate multiple biosensors with artificial intelligence for continuous health surveillance and predictive diagnostics."
+        }
+      ]
+    },
+    {
+      "heading_id": "h0002",
+      "heading_text": "BACKGROUND",
+      "paragraphs": [
+        {
+          "p_id": "p0002",
+          "p_number": "0002",
+          "text": "Traditional medical monitoring requires periodic visits to healthcare facilities, which can miss critical health events occurring between appointments. Current wearable devices typically monitor single parameters and lack sophisticated analysis capabilities for early disease detection."
+        },
+        {
+          "p_id": "p0003",
+          "p_number": "0003",
+          "text": "There is a growing need for comprehensive, continuous health monitoring systems that can detect health anomalies early, predict medical emergencies, and provide actionable insights to both patients and healthcare providers."
+        }
+      ]
+    },
+    {
+      "heading_id": "h0003",
+      "heading_text": "SUMMARY",
+      "paragraphs": [
+        {
+          "p_id": "p0004",
+          "p_number": "0004",
+          "text": "The present invention provides a comprehensive wearable medical monitoring solution that addresses the limitations of existing devices by integrating multiple biosensors with advanced AI algorithms for continuous health surveillance and predictive healthcare."
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claim_number": "0001",
+      "text": "A wearable medical monitoring device comprising: multiple biosensors for measuring heart rate, blood pressure, blood oxygen saturation, and body temperature; an AI processor for real-time data analysis; and wireless communication capabilities for data transmission."
+    },
+    {
+      "claim_number": "0002",
+      "text": "The device according to claim 1, further comprising an electrocardiogram sensor for cardiac rhythm monitoring."
+    },
+    {
+      "claim_number": "0003",
+      "text": "The device according to claim 1, wherein the AI processor is configured to detect health anomalies and predict medical events."
+    },
+    {
+      "claim_number": "0004",
+      "text": "The device according to claim 1, further comprising emergency alert functionality that automatically contacts healthcare providers when critical conditions are detected."
+    },
+    {
+      "claim_number": "0005",
+      "text": "A mobile application for use with the device according to claim 1, providing health data visualization, medication reminders, and personalized health recommendations."
+    },
+    {
+      "claim_number": "0006",
+      "text": "A method for continuous health monitoring comprising: collecting biosensor data from multiple sensors; analyzing the data using AI algorithms; and generating health insights and alerts based on the analysis."
+    }
+  ]
+}

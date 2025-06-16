@@ -465,6 +465,8 @@ def extract_bibliographic_data(root):
     
     return bibliographic_data
 
+
+
 def extract_main_sections(root, debug=False):
     """
     Extract main sections from patent XML, with stricter filtering to exclude 

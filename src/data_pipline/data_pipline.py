@@ -13,10 +13,10 @@ from typing import Dict, List, Optional
 # Add the EU_XML_data_loader to path
 current_dir = Path(__file__).parent
 src_dir = current_dir.parent
-eu_loader_dir = src_dir / "EU_XML_data_loader"
+eu_loader_dir = src_dir / "load_raw_data_xml_pdf_EPO"
 sys.path.append(str(eu_loader_dir))
 
-from load_raw_data import extract_epo_archives
+from load_raw_data_xml_pdf_EPO import extract_epo_archives
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

@@ -205,3 +205,16 @@ EP*
 *.zip
 
 *.TIF
+*.tif
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.webp
+*.mp4
+*.avi
+*.tar
+*.tar.gz
+
+.DS_store

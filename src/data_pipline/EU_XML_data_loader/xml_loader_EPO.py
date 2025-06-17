@@ -465,8 +465,6 @@ def extract_bibliographic_data(root):
     
     return bibliographic_data
 
-
-
 def extract_main_sections(root, debug=False):
     """
     Extract main sections from patent XML, with stricter filtering to exclude 
@@ -583,19 +581,112 @@ def process_patent_xml(xml_file_path, output_file=None, debug=False):
             "claims": []
         }
 
+def process_xml_files_list(xml_file_paths, debug=False):
+    """
+    Process a list of XML file paths and save JSON outputs to corresponding processed directory structure.
+    
+    Args:
+        xml_file_paths: List of XML file paths from get_all_epo_file_paths() or similar
+        debug: Whether to enable debug output
+    
+    Example:
+        Input:  ../data/raw/EPO/EPRTBJV2025000023001001/EPW1B9/EP18823397W1B9/EP18823397W1B9.xml
+        Output: ../data/processed/EPO/EPRTBJV2025000023001001/EPW1B9/EP18823397W1B9/EP18823397W1B9.json
+    """
+    print(f"🚀 Processing {len(xml_file_paths)} XML files...")
+    
+    processed_count = 0
+    error_count = 0
+    
+    for i, xml_path in enumerate(xml_file_paths, 1):
+        try:
+            # Convert raw path to processed path
+            processed_path = convert_raw_to_parced_path(xml_path)
+            
+            # Create output directory if it doesn't exist
+            output_dir = os.path.dirname(processed_path)
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Progress indicator
+            if i % 100 == 0 or i == 1:
+                print(f"📄 Processing {i}/{len(xml_file_paths)}: {os.path.basename(xml_path)}")
+            
+            # Process the XML file
+            result = process_patent_xml(xml_path, processed_path, debug=debug)
+            
+            if result and (result.get('bibliographic_data') or result.get('main_sections') or result.get('claims')):
+                processed_count += 1
+            else:
+                error_count += 1
+                print(f"⚠️ Warning: No data extracted from {os.path.basename(xml_path)}")
+                
+        except Exception as e:
+            error_count += 1
+            print(f"❌ Error processing {os.path.basename(xml_path)}: {e}")
+            if debug:
+                import traceback
+                traceback.print_exc()
+    
+    print(f"\n✅ Processing complete!")
+    print(f"📊 Results:")
+    print(f"  • Successfully processed: {processed_count}")
+    print(f"  • Errors: {error_count}")
+    print(f"  • Total files: {len(xml_file_paths)}")
+
+
+def convert_raw_to_parced_path(raw_xml_path):
+    """
+    Convert a raw XML file path to the corresponding parced JSON file path.
+    
+    Args:
+        raw_xml_path: Path like ../data/raw/EPO/EPRTBJV.../folder/file.xml
+        
+    Returns:
+        parced path like ../data/parced/EPO/EPRTBJV.../folder/file.json
+    """
+    # Convert to Path object for easier manipulation
+    from pathlib import Path
+    
+    raw_path = Path(raw_xml_path)
+    
+    # Replace 'raw' with 'parced' in the path
+    path_parts = list(raw_path.parts)
+    
+    # Find and replace 'raw' with 'parced'
+    for i, part in enumerate(path_parts):
+        if part == 'raw':
+            path_parts[i] = 'parced'
+            break
+    
+    # Change extension from .xml to .json
+    filename = raw_path.stem + '.json'
+    path_parts[-1] = filename
+    
+    # Reconstruct the path
+    processed_path = Path(*path_parts)
+    
+    return str(processed_path)
+
+# Updated process_directory function (optional - for backward compatibility)
 def process_directory(directory_path, output_dir=None, debug=False):
-    """Process all XML files in a directory with enhanced filtering."""
+    """
+    Process all XML files in a directory with enhanced filtering.
+    
+    Args:
+        directory_path: Directory containing XML files
+        output_dir: Output directory (if None, uses same as input)
+        debug: Whether to enable debug output
+    """
     if output_dir is None:
         output_dir = directory_path
     
     os.makedirs(output_dir, exist_ok=True)
     
+    # Get all XML files in the directory
     xml_files = [f for f in os.listdir(directory_path) if f.endswith('.xml')]
-    print(f"Found {len(xml_files)} XML files")
+    xml_file_paths = [os.path.join(directory_path, f) for f in xml_files]
     
-    for xml_file in xml_files:
-        print(f"Processing {xml_file}...")
-        xml_path = os.path.join(directory_path, xml_file)
-        output_file = os.path.join(output_dir, f"{os.path.splitext(xml_file)[0]}_data.json")
-        process_patent_xml(xml_path, output_file, debug=debug)
-
+    print(f"Found {len(xml_files)} XML files in {directory_path}")
+    
+    # Use the new function to process the list
+    process_xml_files_list(xml_file_paths, debug=debug)

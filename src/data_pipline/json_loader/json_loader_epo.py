@@ -15,19 +15,19 @@ if str(config_dir) not in sys.path:
 
 # Now import from data_config
 try:
-    from data_config import RAW_JSON_DIR, PARCED_DATA_DIR
+    from data_config import RAW_JSON_DIR, parsed_DATA_DIR
     print("✅ Successfully imported from data_config.py")
 except ImportError as e:
     print(f"⚠️ Couldn't import from data_config.py: {e}")
     print(f"⚠️ Using default paths instead")
-    RAW_JSON_DIR = str(project_root / "data" / "parced" / "EPO")
-    PARCED_DATA_DIR = str(project_root / "data" / "parced")
+    RAW_JSON_DIR = str(project_root / "data" / "parsed" / "EPO")
+    parsed_DATA_DIR = str(project_root / "data" / "parsed")
 
 
 
 def get_epo_json_file_paths(base_dir: str = None) -> List[str]:
     """
-    Get all EPO JSON file paths from the data/parced/EPO folder recursively.
+    Get all EPO JSON file paths from the data/parsed/EPO folder recursively.
     
     Args:
         base_dir: Base directory path (optional, defaults to project root)
@@ -39,19 +39,19 @@ def get_epo_json_file_paths(base_dir: str = None) -> List[str]:
         # Default to project root (adjust path levels as needed)
         current_dir = Path(__file__).parent
         project_root = current_dir.parent.parent.parent  # Go up to project root
-        epo_parced_dir = project_root / "data" / "parced" / "EPO"
+        epo_parsed_dir = project_root / "data" / "parsed" / "EPO"
     else:
-        epo_parced_dir = Path(base_dir) / "data" / "parced" / "EPO"
+        epo_parsed_dir = Path(base_dir) / "data" / "parsed" / "EPO"
          
     json_file_paths = []
     
-    if epo_parced_dir.exists():
+    if epo_parsed_dir.exists():
         # Recursively find all JSON files in EPO directory
-        for json_file in epo_parced_dir.rglob("*.json"):
+        for json_file in epo_parsed_dir.rglob("*.json"):
             if json_file.is_file():
                 json_file_paths.append(str(json_file))
     else:
-        print(f"⚠️ Warning: EPO parced directory does not exist: {epo_parced_dir}")
+        print(f"⚠️ Warning: EPO parsed directory does not exist: {epo_parsed_dir}")
     
     print(f"📁 Found {len(json_file_paths)} EPO JSON files")
     return json_file_paths
@@ -59,36 +59,36 @@ def get_epo_json_file_paths(base_dir: str = None) -> List[str]:
 
 def get_all_json_file_paths(base_dir: str = None) -> List[str]:
     """
-    Get all JSON file paths from the data/parced folder recursively.
+    Get all JSON file paths from the data/parsed folder recursively.
     
     Args:
         base_dir: Base directory path (optional, defaults to project root)
         
     Returns:
-        List of string paths to all JSON files in parced directory
+        List of string paths to all JSON files in parsed directory
     """
     if base_dir is None:
-        # Use the PARCED_DATA_DIR from config
-        parced_dir = Path(PARCED_DATA_DIR)
+        # Use the parsed_DATA_DIR from config
+        parsed_dir = Path(parsed_DATA_DIR)
     else:
-        parced_dir = Path(base_dir) / "data" / "parced"
+        parsed_dir = Path(base_dir) / "data" / "parsed"
     
     json_file_paths = []
     
-    if parced_dir.exists():
+    if parsed_dir.exists():
         # Recursively find all JSON files
-        for json_file in parced_dir.rglob("*.json"):
+        for json_file in parsed_dir.rglob("*.json"):
             if json_file.is_file():
                 json_file_paths.append(str(json_file))
     else:
-        print(f"⚠️ Warning: Parced directory does not exist: {parced_dir}")
+        print(f"⚠️ Warning: parsed directory does not exist: {parsed_dir}")
     
-    print(f"📁 Found {len(json_file_paths)} JSON files in parced directory")
+    print(f"📁 Found {len(json_file_paths)} JSON files in parsed directory")
     return json_file_paths
 
 
 def load_json_documents() -> List[Document]:
-    """Load JSON documents from the RAW_JSON_DIR (parced EPO directory)."""
+    """Load JSON documents from the RAW_JSON_DIR (parsed EPO directory)."""
     docs = []
     
     if not os.path.exists(RAW_JSON_DIR):
@@ -148,9 +148,9 @@ def load_json_documents() -> List[Document]:
 # Usage examples:
 if __name__ == "__main__":
     print(f"📂 Using RAW_JSON_DIR: {RAW_JSON_DIR}")
-    print(f"📂 Using PARCED_DATA_DIR: {PARCED_DATA_DIR}")
+    print(f"📂 Using parsed_DATA_DIR: {parsed_DATA_DIR}")
     
-    # Get all JSON files from parced directory
+    # Get all JSON files from parsed directory
     all_json_files = get_all_json_file_paths()
     print(f"Total JSON files: {len(all_json_files)}")
     

@@ -13,4 +13,9 @@ jupyterlab
 lxml
 PyMuPDF
 pandas
+langchain-chroma
+langchain-huggingface
+sentence-transformers
+transformers
+ipywidgets
 tiktoken

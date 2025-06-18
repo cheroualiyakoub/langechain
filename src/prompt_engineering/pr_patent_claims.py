@@ -15,7 +15,7 @@ Follow these steps strictly:
 
 1. **Analyze the Description**:
    - Identify the **core invention or novel idea**.
-   - Detect all **technical components**, **methods**, or **features** that contribute to functionality or novelty.
+   - Detect all **technical components**, **methods**, or ** features** that contribute to functionality or novelty.
 
 2. **Generate Patent Claims**:
    - Write the claims in **clear, formal language**.

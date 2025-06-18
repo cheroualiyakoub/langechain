@@ -7,6 +7,10 @@ pydantic
 openai
 anthropic
 langchain-community
+langchain-chroma
 langchain-openai
 PyYAML
 jupyterlab
+langgraph
+sentence-transformers
+torch

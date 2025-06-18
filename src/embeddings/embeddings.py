@@ -60,6 +60,39 @@ class EmbeddingError(Exception):
 
 class DocumentEmbedder:
     """Document embedding and chunking functionality for patent documents"""
+
+    def similarity_search_with_long_query(self, query: str, top_k: int = 5, 
+                                    min_similarity: float = 0.0,
+                                    aggregation_method: str = "max") -> List[Dict[str, Any]]:
+        """
+        Find similar documents to a query (handles both short and long queries)
+        
+        Args:
+            query: User query string (short phrase or long patent description)
+            top_k: Number of top results to return
+            min_similarity: Minimum similarity threshold
+            aggregation_method: How to combine similarities from multiple query chunks 
+                            ("max" or "average")
+            
+        Returns:
+            List of most similar documents with similarity scores
+        """
+        if not self.processed_documents:
+            logger.warning("No processed documents available for search")
+            return []
+        
+        # Embed the query (may return single embedding or list of embeddings)
+        query_embeddings = self.embed_query(query, chunk_if_needed=True)
+        
+        # Handle single embedding (short query)
+        if isinstance(query_embeddings, np.ndarray):
+            return self._search_with_single_embedding(query_embeddings, top_k, min_similarity)
+        
+        # Handle multiple embeddings (long query with chunks)
+        else:
+            return self._search_with_multiple_embeddings(
+                query_embeddings, top_k, min_similarity, aggregation_method
+            )
     
     def __init__(self, config: Optional[EmbeddingConfig] = None):
         """Initialize the document embedder with configuration"""
@@ -376,7 +409,7 @@ class DocumentEmbedder:
     def _generate_embeddings_for_chunks(self, chunks: List[str], doc_idx: int, debug: bool) -> List[np.ndarray]:
         """Generate embeddings for document chunks"""
         embedding_start_time = time.time()
-        
+
         try:
             all_embeddings = []
             
@@ -448,7 +481,133 @@ class DocumentEmbedder:
         if processed_docs:
             embedding_size = sum(doc["embedding"].nbytes for doc in processed_docs)
             logger.info(f"  - Embedding memory usage: {embedding_size/MEMORY_UNIT_MB:.2f} MB")
+
+
+    def _search_with_single_embedding(self, query_embedding: np.ndarray, 
+                                    top_k: int, min_similarity: float) -> List[Dict[str, Any]]:
+        """Search with a single query embedding"""
+        similarities = []
+        
+        for doc in self.processed_documents:
+            doc_embedding = doc["embedding"]
+            
+            # Calculate cosine similarity
+            similarity = np.dot(query_embedding, doc_embedding) / (
+                np.linalg.norm(query_embedding) * np.linalg.norm(doc_embedding)
+            )
+            
+            if similarity >= min_similarity:
+                similarities.append({
+                    "text": doc["text"],
+                    "metadata": doc["metadata"],
+                    "similarity": float(similarity)
+                })
+        
+        # Sort and return top results
+        similarities.sort(key=lambda x: x["similarity"], reverse=True)
+        logger.info(f"Found {len(similarities)} results above threshold {min_similarity}")
+        return similarities[:top_k]
+
+    def _search_with_multiple_embeddings(self, query_embeddings: List[np.ndarray], 
+                                    top_k: int, min_similarity: float,
+                                    aggregation_method: str) -> List[Dict[str, Any]]:
+        """Search with multiple query embeddings (from chunked long query)"""
+        # Calculate similarities for each query chunk against all documents
+        doc_similarities = {}  # doc_index -> list of similarities
+        
+        for query_idx, query_embedding in enumerate(query_embeddings):
+            logger.debug(f"Processing query chunk {query_idx + 1}/{len(query_embeddings)}")
+            
+            for doc_idx, doc in enumerate(self.processed_documents):
+                doc_embedding = doc["embedding"]
+                
+                # Calculate cosine similarity
+                similarity = np.dot(query_embedding, doc_embedding) / (
+                    np.linalg.norm(query_embedding) * np.linalg.norm(doc_embedding)
+                )
+                
+                if doc_idx not in doc_similarities:
+                    doc_similarities[doc_idx] = []
+                doc_similarities[doc_idx].append(similarity)
+        
+        # Aggregate similarities for each document
+        final_similarities = []
+        for doc_idx, similarities_list in doc_similarities.items():
+            if aggregation_method == "max":
+                final_similarity = max(similarities_list)
+            elif aggregation_method == "average":
+                final_similarity = sum(similarities_list) / len(similarities_list)
+            else:
+                raise ValueError(f"Unknown aggregation method: {aggregation_method}")
+            
+            if final_similarity >= min_similarity:
+                doc = self.processed_documents[doc_idx]
+                final_similarities.append({
+                    "text": doc["text"],
+                    "metadata": doc["metadata"],
+                    "similarity": float(final_similarity),
+                    "query_chunk_similarities": similarities_list  # For debugging
+                })
+        
+        # Sort and return top results
+        final_similarities.sort(key=lambda x: x["similarity"], reverse=True)
+        logger.info(f"Found {len(final_similarities)} results above threshold {min_similarity}")
+        logger.info(f"Used {aggregation_method} aggregation across {len(query_embeddings)} query chunks")            
+        return final_similarities[:top_k]
     
+    def embed_query(self, query: str, chunk_if_needed: bool = True) -> Union[np.ndarray, List[np.ndarray]]:
+        """
+        Embed a query string, with optional chunking for long queries
+        
+        Args:
+            query: User query string (could be a full patent description)
+            chunk_if_needed: Whether to chunk long queries
+            
+        Returns:
+            Single embedding vector for short queries, or list of embeddings for chunked long queries
+        """
+        try:
+            query_tokens = self.count_tokens(query)
+            logger.debug(f"Query token count: {query_tokens}")
+            
+            # If query is short, embed directly
+            if query_tokens <= self.config.base_chunk_size or not chunk_if_needed:
+                embedding = self.embedding_model.encode([query])[0]
+                
+                # Handle potential NaN values
+                if np.isnan(embedding).any():
+                    logger.warning("⚠️ NaN values detected in query embedding")
+                    embedding = np.nan_to_num(embedding)
+                    
+                logger.debug(f"Query embedded directly. Shape: {embedding.shape}")
+                return embedding
+            
+            # For long queries, chunk them like documents
+            else:
+                logger.info(f"Query is long ({query_tokens} tokens), chunking before embedding")
+                chunk_size = self.get_chunk_size(query, query_tokens)
+                chunks = self.chunk_text_by_tokens(query, chunk_size)
+                
+                # Embed all chunks
+                embeddings = []
+                for batch_idx in range(0, len(chunks), self.config.batch_size):
+                    batch = chunks[batch_idx:batch_idx + self.config.batch_size]
+                    batch_embeddings = self.embedding_model.encode(batch, show_progress_bar=False)
+                    embeddings.extend(batch_embeddings)
+                
+                # Handle NaN values
+                for i, embedding in enumerate(embeddings):
+                    if np.isnan(embedding).any():
+                        logger.warning(f"⚠️ NaN values detected in query chunk {i}")
+                        embeddings[i] = np.nan_to_num(embedding)
+                
+                logger.debug(f"Query chunked into {len(embeddings)} chunks")
+                return embeddings
+            
+        except Exception as e:
+            logger.error(f"Error embedding query: {str(e)}")
+            raise EmbeddingError(f"Failed to embed query: {str(e)}") from e
+
     def __repr__(self) -> str:
         """String representation of the DocumentEmbedder"""
         return (f"DocumentEmbedder(model={self.config.model_name}, "
@@ -507,7 +666,6 @@ def extract_documents_epo(json_data):
             ))
 
     return documents
-
 
 # Update the batch processing function to use the DocumentEmbedder class
 def batch_process_json_files(file_paths: List[str], extract_documents_func: Callable, 

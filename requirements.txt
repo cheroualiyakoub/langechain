@@ -14,3 +14,7 @@ jupyterlab
 langgraph
 sentence-transformers
 torch
+
+lxml
+PyMuPDF
+pandas

@@ -197,3 +197,9 @@ cython_debug/
 __pycache__/
 *.pyc
 .env
+
+*.pdf
+*.xml
+EP*
+
+*.zip

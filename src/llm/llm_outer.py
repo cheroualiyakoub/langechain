@@ -1,9 +1,9 @@
 import os
 import yaml
 from typing import Callable, Dict, Any, Tuple
-from .openai_provider import OpenAIWrapper
-from .openrouter_provider import OpenRouterWrapper
-from .anthropic_provider import AnthropicWrapper
+from .llm_openai_provider import OpenAIWrapper
+from .llm_openrouter_provider import OpenRouterWrapper
+from .llm_anthropic_provider import AnthropicWrapper
 
 class LLMRouter:
     def __init__(self, provider: str = None, model: str = None, api_key: str = None, base_url: str = None, config_path: str = None):

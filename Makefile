@@ -153,7 +153,7 @@ clean:
 	
 	@echo "$(YELLOW)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@echo "$(GREEN)✅ Cleanup completed! Docker volumes preserved$(NC)"
-	
+
 # Complete cleanup with volume removal (DANGER)
 clean-all:
 	@echo "$(RED)⚠️  WARNING: Complete cleanup with volume removal!$(NC)"

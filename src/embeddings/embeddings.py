@@ -18,82 +18,9 @@ from langchain.schema import Document
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Constants
-DEFAULT_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-DEFAULT_BASE_CHUNK_SIZE = 350
-DEFAULT_MIN_CHUNK_SIZE = 180
-DEFAULT_CHUNK_OVERLAP = 30
-SMALL_DOC_THRESHOLD = 350
-LARGE_DOC_OVERLAP = 32
-DEFAULT_BATCH_SIZE = 8
-MAX_CHUNKS_LIMIT = 1000
-DEBUG_PREVIEW_LIMIT = 3
-PROGRESS_UPDATE_INTERVAL = 10
-MEMORY_UNIT_MB = 1024 * 1024
-
-@dataclass
-class EmbeddingConfig:
-    """Configuration for document embedding process"""
-    model_name: str = DEFAULT_MODEL_NAME
-    base_chunk_size: int = DEFAULT_BASE_CHUNK_SIZE
-    min_chunk_size: int = DEFAULT_MIN_CHUNK_SIZE
-    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP
-    batch_size: int = DEFAULT_BATCH_SIZE
-    max_chunks: int = MAX_CHUNKS_LIMIT
-    enable_debug: bool = True
-    progress_interval: int = PROGRESS_UPDATE_INTERVAL
-    
-    def __post_init__(self):
-        """Validate configuration parameters"""
-        if self.base_chunk_size <= 0:
-            raise ValueError("base_chunk_size must be positive")
-        if self.min_chunk_size <= 0:
-            raise ValueError("min_chunk_size must be positive")
-        if self.chunk_overlap < 0:
-            raise ValueError("chunk_overlap cannot be negative")
-        if self.batch_size <= 0:
-            raise ValueError("batch_size must be positive")
-
-class EmbeddingError(Exception):
-    """Exception raised for errors in the embedding process"""
-    pass
-
 class DocumentEmbedder:
     """Document embedding and chunking functionality for patent documents"""
 
-    def similarity_search_with_long_query(self, query: str, top_k: int = 5, 
-                                    min_similarity: float = 0.0,
-                                    aggregation_method: str = "max") -> List[Dict[str, Any]]:
-        """
-        Find similar documents to a query (handles both short and long queries)
-        
-        Args:
-            query: User query string (short phrase or long patent description)
-            top_k: Number of top results to return
-            min_similarity: Minimum similarity threshold
-            aggregation_method: How to combine similarities from multiple query chunks 
-                            ("max" or "average")
-            
-        Returns:
-            List of most similar documents with similarity scores
-        """
-        if not self.processed_documents:
-            logger.warning("No processed documents available for search")
-            return []
-        
-        # Embed the query (may return single embedding or list of embeddings)
-        query_embeddings = self.embed_query(query, chunk_if_needed=True)
-        
-        # Handle single embedding (short query)
-        if isinstance(query_embeddings, np.ndarray):
-            return self._search_with_single_embedding(query_embeddings, top_k, min_similarity)
-        
-        # Handle multiple embeddings (long query with chunks)
-        else:
-            return self._search_with_multiple_embeddings(
-                query_embeddings, top_k, min_similarity, aggregation_method
-            )
-    
     def __init__(self, config: Optional[EmbeddingConfig] = None):
         """Initialize the document embedder with configuration"""
         self.config = config or EmbeddingConfig()
@@ -482,6 +409,38 @@ class DocumentEmbedder:
             embedding_size = sum(doc["embedding"].nbytes for doc in processed_docs)
             logger.info(f"  - Embedding memory usage: {embedding_size/MEMORY_UNIT_MB:.2f} MB")
 
+    def similarity_search_with_long_query(self, query: str, top_k: int = 5, 
+                                    min_similarity: float = 0.0,
+                                    aggregation_method: str = "max") -> List[Dict[str, Any]]:
+        """
+        Find similar documents to a query (handles both short and long queries)
+        
+        Args:
+            query: User query string (short phrase or long patent description)
+            top_k: Number of top results to return
+            min_similarity: Minimum similarity threshold
+            aggregation_method: How to combine similarities from multiple query chunks 
+                            ("max" or "average")
+            
+        Returns:
+            List of most similar documents with similarity scores
+        """
+        if not self.processed_documents:
+            logger.warning("No processed documents available for search")
+            return []
+        
+        # Embed the query (may return single embedding or list of embeddings)
+        query_embeddings = self.embed_query(query, chunk_if_needed=True)
+        
+        # Handle single embedding (short query)
+        if isinstance(query_embeddings, np.ndarray):
+            return self._search_with_single_embedding(query_embeddings, top_k, min_similarity)
+        
+        # Handle multiple embeddings (long query with chunks)
+        else:
+            return self._search_with_multiple_embeddings(
+                query_embeddings, top_k, min_similarity, aggregation_method
+            )
 
     def _search_with_single_embedding(self, query_embedding: np.ndarray, 
                                     top_k: int, min_similarity: float) -> List[Dict[str, Any]]:

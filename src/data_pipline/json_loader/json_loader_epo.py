@@ -140,6 +140,10 @@ class EPOPatentLoader(PatentJSONLoader):
         
         documents = []
 
+            # Fix the incompatible metadata types
+        ipc_classes = biblio.get("ipc_classes", [])
+        ipc_classes_str = ", ".join(ipc_classes) if isinstance(ipc_classes, list) else str(ipc_classes)
+
         common_meta = {
             "doc_id": biblio.get("doc_id", "UNKNOWN"),
             "language": biblio.get("language"),
@@ -147,9 +151,9 @@ class EPOPatentLoader(PatentJSONLoader):
             "doc_number": biblio.get("doc_number"),
             "application_number": biblio.get("application_number"),
             "publication_date": biblio.get("publication_date"),
-            "ipc_classes": biblio.get("ipc_classes", []),
+            "ipc_classes": ipc_classes_str,
             "file":biblio.get("file"),
-            "filePath":file_path.absolute(),
+            "filePath":str(file_path.absolute()),
             "title": self.extract_title(data).get("title", ""),
         }
 

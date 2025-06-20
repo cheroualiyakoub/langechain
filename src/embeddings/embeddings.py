@@ -283,4 +283,117 @@ class DocumentEmbedder:
         """String representation"""
         return (f"DocumentEmbedder(model={self.config.model_name}, "
                 f"documents={len(self.documents)}, "
+<<<<<<< Updated upstream
                 f"processed={len(self.processed_documents)})")
+=======
+                f"processed={len(self.processed_documents)})")
+
+# Prepare .json file for embedding
+def extract_documents_epo(json_data):
+    bibliographic = json_data.get("bibliographic_data", {})
+    doc_id = bibliographic.get("doc_id", "UNKNOWN")
+    documents = []
+
+    # Common metadata to propagate
+    common_meta = {
+        "doc_id": doc_id,
+        "title": bibliographic.get("title", {}).get("en"),
+        "language": bibliographic.get("language"),
+        "country": bibliographic.get("country"),
+        "doc_number": bibliographic.get("doc_number"),
+        "application_number": bibliographic.get("application_number"),
+        "publication_date": bibliographic.get("publication_date"),
+        "ipc_classes": bibliographic.get("ipc_classes", []),
+        "file":bibliographic.get("file")
+    }
+
+    # Title (en preferred)
+    title_dict = bibliographic.get("title", {})
+    title = title_dict.get("en") or next(iter(title_dict.values()), "")
+    if title:
+        documents.append(Document(
+            page_content=title,
+            metadata={**common_meta, "section": "title"}
+        ))
+
+    # Abstract
+    abstract = bibliographic.get("abstract")
+    if abstract:
+        documents.append(Document(
+            page_content=abstract,
+            metadata={**common_meta, "section": "abstract"}
+        ))
+
+    # Claims
+    for claim in json_data.get("claims", []):
+        documents.append(Document(
+            page_content=claim["text"],
+            metadata={**common_meta, "section": "claim", "claim_number": claim.get("claim_number")}
+        ))
+
+    # Main sections
+    for section in json_data.get("main_sections", []):
+        section_name = section.get("heading_text", "UNKNOWN_SECTION")
+        for p in section.get("paragraphs", []):
+            documents.append(Document(
+                page_content=f"{section_name}\n{p['text']}",
+                metadata={**common_meta, "section": section_name, "p_id": p.get("p_id")}
+            ))
+
+    return documents
+
+
+# Update the batch processing function to use the DocumentEmbedder class
+def batch_process_json_files(file_paths: List[str], extract_documents_func: Callable, 
+                           batch_size: int = 10, config: Optional[EmbeddingConfig] = None) -> List[Dict[str, Any]]:
+    """
+    Process multiple JSON files in batches and generate embeddings.
+    
+    Args:
+        file_paths: List of paths to JSON files
+        extract_documents_func: Function to extract documents from JSON data
+        batch_size: Number of files to process in each batch
+        config: Optional embedding configuration
+    
+    Returns:
+        List of processed documents with embeddings
+    """
+    if not file_paths:
+        logger.warning("No file paths provided for batch processing")
+        return []
+        
+    embedder = DocumentEmbedder(config or EmbeddingConfig())
+    all_documents = []
+    
+    total_batches = (len(file_paths) + batch_size - 1) // batch_size
+    
+    for i in range(0, len(file_paths), batch_size):
+        batch_files = file_paths[i:i+batch_size]
+        batch_num = i // batch_size + 1
+        
+        logger.info(f"Processing batch {batch_num}/{total_batches}")
+        
+        batch_documents = []
+        for file_path in batch_files:
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    docs = extract_documents_func(data)
+                    batch_documents.extend(docs)
+                    
+                logger.debug(f"Loaded {len(docs)} documents from {file_path}")
+            except Exception as e:
+                logger.error(f"Error processing {file_path}: {str(e)}")
+        
+        # Process batch of documents
+        if batch_documents:
+            embedder.add_documents(batch_documents)
+            processed_docs = embedder.process_all_documents(debug=False)
+            all_documents.extend(processed_docs)
+            
+            # Clear documents to free memory
+            embedder.documents = []
+        
+    logger.info(f"Batch processing completed. Total processed documents: {len(all_documents)}")
+    return all_documents
+>>>>>>> Stashed changes

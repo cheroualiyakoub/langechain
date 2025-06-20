@@ -1,0 +1,66 @@
+graph TD
+    A[EPO ZIP Database] --> B[Unzip & Extract XML Files]
+    B --> C[Python Script: Parse XML to JSON]
+    C --> D[Structured JSON Data]
+    D --> E[Token-Based Chunking<br/>Transformer AutoTokenizer]
+    E --> F[Semantic Chunks + Metadata]
+    F --> G[ChromaDB Embedding<br/>HuggingFace Model]
+    G --> H[Vector Database Ready]
+    
+    I[User Input] --> J{Input Categorization}
+    J -->|Description Query| K[Description Processing]
+    J -->|Claims Check| L[Claims Processing]
+    J -->|Both| M[Combined Processing]
+    J -->|Chat/Explore| N[Chat Processing]
+    
+    K --> O{Input Length Check}
+    L --> P[NOT IMPLEMENTED]
+    M --> Q[NOT IMPLEMENTED]
+    N --> O
+    
+    O -->|Long| R[Chunk Input]
+    O -->|Short| S[Direct Processing]
+    R --> T[Cosine Similarity Search]
+    S --> T
+    
+    T --> H
+    T --> U[Retrieve Similar Chunks]
+    U --> V[Return Results:<br/>- Paper descriptions<br/>- Metadata<br/>- PDF paths]
+    
+    W[Current Limitations] --> X[Limited to 50-100 papers<br/>Storage constraints]
+    W --> Y[Only description & chat queries<br/>Claims processing incomplete]
+    
+    V --> Z["Key Observations & Improvement Suggestions:
+
+    Architecture Strengths:
+    • Clean ETL pipeline from raw XML to searchable vectors
+    • Proper semantic chunking with metadata preservation
+    • Efficient vector similarity search implementation
+
+    Priority Improvements:
+
+    1. Complete Feature Implementation
+
+    2. Scalability Solutions
+    • Hierarchical Search: Pre-filter by patent categories/classifications
+    • Incremental Loading: Load patent batches based on query relevance
+    • ❓ Caching Layer: Store frequently accessed embeddings in memory
+
+    3. Query Processing Enhancement
+    • Add query intent classification (more robust than simple categorization)
+    • Add result relevance scoring and ranking
+
+    4. Technical Optimizations
+    • ❓ Embedding Model: Evaluate domain-specific patent embeddings
+    • Database: Consider PostgreSQL with pgvector for better scalability
+
+    5. User Experience
+    • Add confidence scores to results
+    • Implement result explanation (why this patent matches)
+    • Add filtering by patent date, classification, etc."]
+    
+    style P fill:#ffcccc
+    style Q fill:#ffcccc
+    style X fill:#ffffcc
+    style Y fill:#ffffcc
+    style Z fill:#f9f9f9

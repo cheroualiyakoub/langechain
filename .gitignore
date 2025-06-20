@@ -218,3 +218,5 @@ EP*
 *.tar.gz
 
 .DS_store
+
+/chroma_langchain_db

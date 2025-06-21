@@ -1,0 +1,357 @@
+{
+  "bibliographic_data": {
+    "doc_id": "EP24789012A1",
+    "file": "EP24789012NWA1.xml",
+    "language": "en",
+    "country": "EP",
+    "doc_number": "4890123",
+    "kind_code": "A1",
+    "correction_code": null,
+    "publication_date": "20250815",
+    "status": "n",
+    "dtd_version": "ep-patent-document-v1-7",
+    "document_type": "EUROPEAN PATENT APPLICATION",
+    "kind": "A1",
+    "publication_date_full": "20250815",
+    "application_number": "24789012.3",
+    "application_date": "20240201",
+    "corrigendum_bulletin": {
+      "date": "20250815",
+      "bulletin_number": "202533"
+    },
+    "publication_bulletin": {
+      "date": "20250815",
+      "bulletin_number": "202533"
+    },
+    "ipc_classes": [
+      "G06F  16/901       20190101AFI20250515BHEP",
+      "G06N   5/02        20230101ALI20250515BHEP",
+      "G06N  20/00        20190101ALI20250515BHEP",
+      "G06F  40/30        20200101ALI20250515BHEP"
+    ],
+    "title": {
+      "de": "INTELLIGENTES WISSENSMANAGEMENT-SYSTEM MIT SELBSTLERNENDEN ALGORITHMEN FÜR AUTOMATISIERTE DATENEXTRAKTION UND SEMANTISCHE ANALYSE",
+      "en": "INTELLIGENT KNOWLEDGE MANAGEMENT SYSTEM WITH SELF-LEARNING ALGORITHMS FOR AUTOMATED DATA EXTRACTION AND SEMANTIC ANALYSIS",
+      "fr": "SYSTÈME DE GESTION DES CONNAISSANCES INTELLIGENT AVEC ALGORITHMES AUTO-APPRENANTS POUR L'EXTRACTION AUTOMATISÉE DE DONNÉES ET L'ANALYSE SÉMANTIQUE"
+    },
+    "inventors": [
+      {
+        "name": "KUMAR, Pradeep",
+        "address": {
+          "city": "Bangalore 560001",
+          "country": "IN"
+        }
+      },
+      {
+        "name": "MÜLLER, Andreas",
+        "address": {
+          "city": "München 80333",
+          "country": "DE"
+        }
+      },
+      {
+        "name": "ZHANG, Wei",
+        "address": {
+          "city": "Shanghai 200000",
+          "country": "CN"
+        }
+      }
+    ],
+    "applicants": [
+      {
+        "name": "TechSolutions Global Inc.",
+        "address": {
+          "street": "Innovation Drive 100",
+          "city": "Palo Alto, CA 94301",
+          "country": "US"
+        }
+      }
+    ],
+    "representatives": [
+      {
+        "name": "InnovateIP Partners LLP",
+        "id": "106789012",
+        "address": {
+          "street": "Technologiepark 42",
+          "city": "81379 München",
+          "country": "DE"
+        }
+      }
+    ],
+    "designated_states": [
+      "AT", "BE", "BG", "CH", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GB", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK"
+    ],
+    "abstract": "The present invention relates to an intelligent knowledge management system that employs advanced machine learning algorithms and natural language processing techniques for automated data extraction, semantic analysis, and knowledge discovery from heterogeneous data sources. The system comprises a multi-layered architecture including a data ingestion layer with support for various file formats and data streams, a preprocessing layer with automated data cleaning and normalization capabilities, a semantic analysis engine utilizing transformer-based neural networks, and an intelligent knowledge graph construction module. The system features adaptive learning capabilities that continuously improve extraction accuracy through reinforcement learning, supports real-time processing of streaming data, and provides intelligent query interfaces with natural language understanding. Advanced features include automated ontology generation, cross-lingual knowledge transfer, multi-modal data processing capabilities, and enterprise-grade security with fine-grained access controls."
+  },
+  "main_sections": [
+    {
+      "heading_id": "h0001",
+      "heading_text": "TECHNICAL FIELD",
+      "paragraphs": [
+        {
+          "p_id": "p0001",
+          "p_number": "0001",
+          "text": "The present invention relates to the field of artificial intelligence and knowledge management systems, specifically to intelligent systems that employ machine learning algorithms, natural language processing, and semantic analysis techniques for automated knowledge extraction, organization, and retrieval from diverse data sources."
+        },
+        {
+          "p_id": "p0002",
+          "p_number": "0002",
+          "text": "More particularly, the invention concerns systems and methods for processing structured and unstructured data, including documents, databases, multimedia content, and real-time data streams, using advanced AI techniques to extract meaningful knowledge, build semantic relationships, and provide intelligent access to information through natural language interfaces."
+        }
+      ]
+    },
+    {
+      "heading_id": "h0002",
+      "heading_text": "BACKGROUND",
+      "paragraphs": [
+        {
+          "p_id": "p0003",
+          "p_number": "0003",
+          "text": "In today's data-driven world, organizations face unprecedented challenges in managing, processing, and extracting value from rapidly growing volumes of heterogeneous data. Traditional knowledge management systems often rely on manual processes for data categorization, tagging, and organization, which are time-consuming, error-prone, and do not scale effectively with increasing data volumes."
+        },
+        {
+          "p_id": "p0004",
+          "p_number": "0004",
+          "text": "Existing systems typically suffer from several limitations: (1) inability to process diverse data formats and sources in a unified manner, (2) lack of semantic understanding of content context and relationships, (3) limited capability for automatic knowledge discovery and pattern recognition, (4) insufficient support for real-time data processing and analysis, and (5) poor integration with modern AI and machine learning technologies."
+        },
+        {
+          "p_id": "p0005",
+          "p_number": "0005",
+          "text": "Furthermore, conventional knowledge management solutions often require extensive manual configuration and domain expertise to achieve reasonable performance, making them unsuitable for dynamic environments where data types, formats, and requirements frequently change. The lack of adaptive learning capabilities means that these systems cannot improve their performance over time without significant human intervention."
+        },
+        {
+          "p_id": "p0006",
+          "p_number": "0006",
+          "text": "Recent advances in artificial intelligence, particularly in the areas of transformer-based neural networks, deep learning, and natural language processing, have opened new possibilities for creating more intelligent and autonomous knowledge management systems. However, integrating these technologies into practical, scalable solutions remains a significant challenge."
+        }
+      ]
+    },
+    {
+      "heading_id": "h0003",
+      "heading_text": "SUMMARY OF THE INVENTION",
+      "paragraphs": [
+        {
+          "p_id": "p0007",
+          "p_number": "0007",
+          "text": "The present invention addresses the limitations of existing knowledge management systems by providing an intelligent, self-learning platform that combines advanced artificial intelligence techniques with scalable system architecture to enable automated knowledge extraction, semantic analysis, and intelligent information retrieval."
+        },
+        {
+          "p_id": "p0008",
+          "p_number": "0008",
+          "text": "According to a first aspect of the invention, there is provided an intelligent knowledge management system comprising: a multi-format data ingestion module capable of processing structured and unstructured data from various sources; a preprocessing engine with automated data cleaning, normalization, and format conversion capabilities; a semantic analysis module utilizing transformer-based neural networks for content understanding and relationship extraction; and a knowledge graph construction engine for organizing extracted information into meaningful semantic structures."
+        },
+        {
+          "p_id": "p0009",
+          "p_number": "0009",
+          "text": "The system further includes an adaptive learning framework that employs reinforcement learning algorithms to continuously improve extraction accuracy and semantic understanding based on user feedback and system performance metrics. This self-learning capability enables the system to adapt to new domains, data types, and user requirements without manual reconfiguration."
+        },
+        {
+          "p_id": "p0010",
+          "p_number": "0010",
+          "text": "According to a second aspect of the invention, there is provided a method for automated knowledge extraction and management comprising the steps of: ingesting data from multiple heterogeneous sources; applying preprocessing algorithms to clean and normalize the data; performing semantic analysis using deep learning models to extract entities, relationships, and concepts; constructing and updating knowledge graphs based on extracted information; and providing intelligent query interfaces with natural language understanding capabilities."
+        },
+        {
+          "p_id": "p0011",
+          "p_number": "0011",
+          "text": "The invention provides several technical advantages over existing solutions: improved accuracy in knowledge extraction through advanced AI techniques; scalability to handle large volumes of diverse data types; adaptive learning capabilities that reduce manual maintenance requirements; real-time processing support for streaming data sources; and comprehensive security features for enterprise deployments."
+        }
+      ]
+    },
+    {
+      "heading_id": "h0004",
+      "heading_text": "BRIEF DESCRIPTION OF THE DRAWINGS",
+      "paragraphs": [
+        {
+          "p_id": "p0012",
+          "p_number": "0012",
+          "text": "The invention will be better understood from the following detailed description of exemplary embodiments, taken in conjunction with the accompanying drawings in which:"
+        },
+        {
+          "p_id": "p0013",
+          "p_number": "0013",
+          "text": "Figure 1 is a block diagram illustrating the overall architecture of the intelligent knowledge management system according to an embodiment of the invention;"
+        },
+        {
+          "p_id": "p0014",
+          "p_number": "0014",
+          "text": "Figure 2 shows a detailed view of the data ingestion and preprocessing modules;"
+        },
+        {
+          "p_id": "p0015",
+          "p_number": "0015",
+          "text": "Figure 3 illustrates the semantic analysis engine architecture with transformer-based neural networks;"
+        },
+        {
+          "p_id": "p0016",
+          "p_number": "0016",
+          "text": "Figure 4 depicts the knowledge graph construction and management process;"
+        },
+        {
+          "p_id": "p0017",
+          "p_number": "0017",
+          "text": "Figure 5 shows the adaptive learning framework and feedback loop mechanisms."
+        }
+      ]
+    },
+    {
+      "heading_id": "h0005",
+      "heading_text": "DETAILED DESCRIPTION OF THE INVENTION",
+      "paragraphs": [
+        {
+          "p_id": "p0018",
+          "p_number": "0018",
+          "text": "The following detailed description illustrates the invention by way of example and not by way of limitation. The description clearly enables one skilled in the art to make and use the invention, describes several embodiments, adaptations, variations, alternatives, and uses of the invention, including what is presently believed to be the best mode of carrying out the invention."
+        },
+        {
+          "p_id": "p0019",
+          "p_number": "0019",
+          "text": "Referring to Figure 1, the intelligent knowledge management system 100 comprises several interconnected modules working together to provide comprehensive knowledge extraction and management capabilities. The system architecture is designed to be modular, scalable, and adaptable to various deployment scenarios."
+        },
+        {
+          "p_id": "p0020",
+          "p_number": "0020",
+          "text": "The data ingestion module 110 serves as the entry point for various data sources including structured databases, unstructured documents, multimedia files, web services, and real-time data streams. The module supports multiple data formats including PDF, Word documents, HTML, XML, JSON, CSV, audio files, video files, and custom proprietary formats through extensible plugin architecture."
+        },
+        {
+          "p_id": "p0021",
+          "p_number": "0021",
+          "text": "Data preprocessing module 120 applies a series of automated cleaning and normalization operations to ensure data quality and consistency. This includes text cleaning algorithms, format standardization, encoding normalization, duplicate detection and removal, and metadata extraction. The module employs machine learning techniques to automatically identify and correct common data quality issues."
+        },
+        {
+          "p_id": "p0022",
+          "p_number": "0022",
+          "text": "The semantic analysis engine 130 represents the core intelligence of the system, utilizing state-of-the-art transformer-based neural networks including BERT, GPT, and custom-trained models for domain-specific tasks. The engine performs named entity recognition, relationship extraction, sentiment analysis, topic modeling, and concept identification. Advanced features include cross-lingual processing, multi-modal analysis, and contextual understanding."
+        },
+        {
+          "p_id": "p0023",
+          "p_number": "0023",
+          "text": "Knowledge graph construction module 140 organizes extracted information into sophisticated semantic structures that capture entities, relationships, and conceptual hierarchies. The module implements advanced graph algorithms for entity resolution, relationship inference, and knowledge consolidation. It supports both automatic ontology generation and integration with existing domain ontologies."
+        },
+        {
+          "p_id": "p0024",
+          "p_number": "0024",
+          "text": "The adaptive learning framework 150 implements reinforcement learning algorithms that continuously monitor system performance and adjust model parameters to improve accuracy over time. The framework collects user feedback, system metrics, and performance indicators to drive the learning process. It includes mechanisms for active learning, transfer learning, and few-shot learning to adapt to new domains efficiently."
+        },
+        {
+          "p_id": "p0025",
+          "p_number": "0025",
+          "text": "Query processing module 160 provides intelligent interfaces for information retrieval and knowledge exploration. It supports natural language queries, semantic search, graph traversal operations, and complex analytical queries. The module implements advanced ranking algorithms, result personalization, and interactive query refinement capabilities."
+        },
+        {
+          "p_id": "p0026",
+          "p_number": "0026",
+          "text": "Security and access control module 170 ensures enterprise-grade security with fine-grained access controls, data encryption, audit logging, and compliance features. The module supports role-based access control, attribute-based access control, and dynamic policy enforcement based on data sensitivity and user credentials."
+        },
+        {
+          "p_id": "p0027",
+          "p_number": "0027",
+          "text": "In operation, the system processes data through a sophisticated pipeline that begins with data ingestion and proceeds through preprocessing, semantic analysis, knowledge graph construction, and finally provides intelligent access to the processed information. The adaptive learning framework continuously monitors and improves system performance throughout this process."
+        },
+        {
+          "p_id": "p0028",
+          "p_number": "0028",
+          "text": "The system supports real-time processing capabilities through stream processing technologies and implements efficient caching and indexing mechanisms to ensure responsive performance even with large-scale datasets. Horizontal scaling is achieved through distributed processing frameworks and cloud-native deployment options."
+        }
+      ]
+    },
+    {
+      "heading_id": "h0006",
+      "heading_text": "IMPLEMENTATION EXAMPLES",
+      "paragraphs": [
+        {
+          "p_id": "p0029",
+          "p_number": "0029",
+          "text": "Example 1: Corporate Document Management - A multinational corporation implements the system to manage technical documentation, patents, research papers, and internal reports across multiple languages and formats. The system automatically extracts key concepts, identifies expert authors, tracks technology trends, and provides intelligent search capabilities for researchers and engineers."
+        },
+        {
+          "p_id": "p0030",
+          "p_number": "0030",
+          "text": "Example 2: Healthcare Knowledge Management - A healthcare organization uses the system to process medical literature, patient records, clinical trial data, and regulatory documents. The system identifies medical entities, drug interactions, treatment protocols, and research findings, enabling evidence-based decision making and clinical research acceleration."
+        },
+        {
+          "p_id": "p0031",
+          "p_number": "0031",
+          "text": "Example 3: Financial Intelligence Platform - A financial services company deploys the system to analyze market reports, regulatory filings, news articles, and social media content. The system extracts financial entities, market sentiment, regulatory changes, and risk factors, providing comprehensive market intelligence and compliance monitoring."
+        }
+      ]
+    },
+    {
+      "heading_id": "h0007",
+      "heading_text": "ADVANTAGES AND BENEFITS",
+      "paragraphs": [
+        {
+          "p_id": "p0032",
+          "p_number": "0032",
+          "text": "The present invention provides numerous advantages over existing knowledge management solutions: (1) Significantly improved accuracy in knowledge extraction through advanced AI techniques; (2) Substantial reduction in manual effort required for data processing and organization; (3) Enhanced scalability to handle enterprise-scale data volumes; (4) Adaptive learning capabilities that improve system performance over time; (5) Comprehensive support for diverse data types and formats."
+        },
+        {
+          "p_id": "p0033",
+          "p_number": "0033",
+          "text": "Additional benefits include: (6) Real-time processing capabilities for dynamic data environments; (7) Intelligent query interfaces that understand natural language; (8) Enterprise-grade security and compliance features; (9) Flexible deployment options including cloud and on-premises; (10) Extensive API support for integration with existing systems."
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claim_number": "0001",
+      "text": "An intelligent knowledge management system comprising: a data ingestion module configured to receive and process data from multiple heterogeneous sources including structured databases, unstructured documents, and real-time data streams; a preprocessing engine configured to automatically clean, normalize, and format the received data; a semantic analysis module utilizing transformer-based neural networks configured to extract entities, relationships, and concepts from the processed data; a knowledge graph construction module configured to organize extracted information into semantic structures; and an adaptive learning framework configured to continuously improve system performance through reinforcement learning algorithms."
+    },
+    {
+      "claim_number": "0002",
+      "text": "The system according to claim 1, wherein the data ingestion module supports multiple data formats including PDF, Word documents, HTML, XML, JSON, CSV, audio files, video files, and custom proprietary formats through an extensible plugin architecture."
+    },
+    {
+      "claim_number": "0003",
+      "text": "The system according to claim 1, wherein the semantic analysis module implements named entity recognition, relationship extraction, sentiment analysis, topic modeling, and concept identification using pre-trained and custom-trained transformer models."
+    },
+    {
+      "claim_number": "0004",
+      "text": "The system according to claim 1, wherein the knowledge graph construction module implements entity resolution algorithms, relationship inference mechanisms, and automatic ontology generation capabilities."
+    },
+    {
+      "claim_number": "0005",
+      "text": "The system according to claim 1, wherein the adaptive learning framework implements active learning, transfer learning, and few-shot learning techniques to adapt to new domains with minimal training data."
+    },
+    {
+      "claim_number": "0006",
+      "text": "The system according to claim 1, further comprising a query processing module configured to support natural language queries, semantic search operations, and graph traversal queries with intelligent result ranking and personalization."
+    },
+    {
+      "claim_number": "0007",
+      "text": "The system according to claim 1, further comprising a security module implementing role-based access control, data encryption, audit logging, and compliance monitoring features."
+    },
+    {
+      "claim_number": "0008",
+      "text": "The system according to claim 1, wherein the system supports real-time processing of streaming data through distributed processing frameworks and implements horizontal scaling capabilities."
+    },
+    {
+      "claim_number": "0009",
+      "text": "A method for automated knowledge extraction and management comprising: ingesting data from multiple heterogeneous sources using a configurable data ingestion module; preprocessing the ingested data through automated cleaning, normalization, and format conversion operations; performing semantic analysis on the preprocessed data using transformer-based neural networks to extract entities, relationships, and concepts; constructing knowledge graphs from the extracted semantic information; implementing adaptive learning to continuously improve extraction accuracy; and providing intelligent query interfaces with natural language understanding capabilities."
+    },
+    {
+      "claim_number": "0010",
+      "text": "The method according to claim 9, wherein the semantic analysis step includes cross-lingual processing capabilities to handle multilingual data sources and extract knowledge across different languages."
+    },
+    {
+      "claim_number": "0011",
+      "text": "The method according to claim 9, wherein the knowledge graph construction step includes entity resolution to identify and merge duplicate entities and relationship inference to discover implicit connections between entities."
+    },
+    {
+      "claim_number": "0012",
+      "text": "The method according to claim 9, wherein the adaptive learning step utilizes user feedback, system performance metrics, and quality indicators to adjust model parameters and improve system accuracy over time."
+    },
+    {
+      "claim_number": "0013",
+      "text": "A computer-readable storage medium storing instructions that, when executed by a processor, cause the processor to implement the method according to any of claims 9-12."
+    },
+    {
+      "claim_number": "0014",
+      "text": "A distributed computing system for knowledge management comprising multiple interconnected processing nodes, each node implementing components of the system according to claim 1, with coordination mechanisms for distributed processing and knowledge sharing across nodes."
+    },
+    {
+      "claim_number": "0015",
+      "text": "The system according to claim 1, further comprising an API gateway providing RESTful and GraphQL interfaces for integration with external applications and services, including authentication, rate limiting, and request routing capabilities."
+    }
+  ]
+}

@@ -326,3 +326,181 @@ Specifically for your EPO and USPTO code:
 6. Refine shared components
 
 This architecture allows you to add new patent data sources with minimal code, standardizes processing across sources, and maintains separation of concerns while reducing duplication.
+
+
+
+
+
+# Patent Data Processing Architecture
+
+## 📊 Architecture Flow Diagram
+
+```mermaid
+graph TB
+    %% Data Ingest Layer
+    CLIENT[Client Application] --> ORCHESTRATOR[DataOrchestrator]
+    ORCHESTRATOR --> CONFIG_MGR[ConfigurationManager]
+    
+    subgraph "Data Source Layer"
+        DATASRC_FACTORY[DataSourceFactory] --> EPO_SRC[EPOSourceAdapter]
+        DATASRC_FACTORY --> USPTO_SRC[USPTOSourceAdapter]
+    end
+    
+    subgraph "Processing Pipeline"
+        PROCESSOR_FACTORY[ProcessorFactory] --> EXTRACT[DocumentExtractor]
+        PROCESSOR_FACTORY --> CLEAN[TextCleaner]
+        PROCESSOR_FACTORY --> CHUNK[DocumentChunker]
+        PROCESSOR_FACTORY --> ENRICH[MetadataEnricher]
+    end
+    
+    subgraph "Repository Layer"
+        REPO_FACTORY[RepositoryFactory] --> PAT_REPO[PatentRepository]
+        REPO_FACTORY --> VEC_REPO[VectorRepository]
+    end
+    
+    subgraph "AI/ML Layer"
+        MODEL_FACTORY[ModelFactory] --> EMBED[EmbeddingManager]
+        MODEL_FACTORY --> LLM_MGR[LLMManager]
+    end
+    
+    ORCHESTRATOR --> DATASRC_FACTORY
+    ORCHESTRATOR --> PROCESSOR_FACTORY
+    ORCHESTRATOR --> REPO_FACTORY
+    ORCHESTRATOR --> MODEL_FACTORY
+    
+    %% Flow between components
+    EPO_SRC & USPTO_SRC --> EXTRACT
+    EXTRACT --> CLEAN
+    CLEAN --> CHUNK
+    CHUNK --> ENRICH
+    ENRICH --> PAT_REPO
+    ENRICH --> EMBED
+    EMBED --> VEC_REPO
+    VEC_REPO & PAT_REPO & LLM_MGR --> SERVICE[PatentService]
+    
+    %% Dagster Integration
+    ORCHESTRATOR -.-> DAGSTER[DagsterPipeline]
+```
+
+## 🧰 Core Components
+
+### 1. Management & Orchestration
+
+| Component | Description | Responsibility |
+|-----------|-------------|----------------|
+| `ConfigurationManager` | Centralized configuration system | Loads settings from YAML/env, validates configurations |
+| `DataOrchestrator` | Main pipeline coordinator | Coordinates complete data flow from source to storage |
+| `LoggingManager` | Centralized logging | Handles structured logging across all components |
+| `ErrorManager` | Error handling | Standardizes error handling and recovery strategies |
+
+### 2. Data Source Components
+
+| Component | Description | Responsibility |
+|-----------|-------------|----------------|
+| `DataSourceFactory` | Creates appropriate source adapters | Returns correct adapter based on configuration |
+| `PatentDataSource` (interface) | Abstract data source | Defines contract for all patent data sources |
+| `EPOSourceAdapter` | EPO-specific data extraction | Handles EPO-specific formats and protocols |
+| `USPTOSourceAdapter` | USPTO-specific data extraction | Handles USPTO-specific formats and protocols |
+| `RawPatentValidator` | Validates raw patent data | Ensures minimum data quality before processing |
+
+### 3. Processing Pipeline
+
+| Component | Description | Responsibility |
+|-----------|-------------|----------------|
+| `ProcessorFactory` | Creates processing components | Configures processors based on data source |
+| `DocumentExtractor` | Extracts structured data | Converts raw patent data to structured documents |
+| `DocumentStandardizer` | Format normalization | Creates unified document format from source-specific formats |
+| `TextCleaner` | Text normalization | Removes artifacts, normalizes text |
+| `DocumentChunker` | Splits documents | Creates optimal chunks for embedding |
+| `MetadataEnricher` | Enhances metadata | Adds computed fields, normalizes metadata |
+
+### 4. Repository Layer
+
+| Component | Description | Responsibility |
+|-----------|-------------|----------------|
+| `RepositoryFactory` | Creates data repositories | Returns appropriate repository implementations |
+| `PatentRepository` | Patent data storage | Handles CRUD operations for patent documents |
+| `VectorRepository` | Vector embedding storage | Manages vector embeddings and similarity search |
+| `CacheManager` | Manages caching | Provides caching strategies for repositories |
+
+### 5. AI/ML Components
+
+| Component | Description | Responsibility |
+|-----------|-------------|----------------|
+| `ModelFactory` | Creates AI model interfaces | Returns configured model implementations |
+| `EmbeddingManager` | Manages embedding models | Handles document embedding with configurable models |
+| `LLMManager` | Manages language models | Provides unified interface to various LLMs |
+| `PromptManager` | Manages prompt templates | Loads and renders prompt templates |
+
+### 6. Service Layer
+
+| Component | Description | Responsibility |
+|-----------|-------------|----------------|
+| `PatentService` | Business logic for patents | Provides high-level patent operations |
+| `SearchService` | Search functionality | Handles semantic and keyword search |
+| `GenerationService` | Text generation | Handles claim generation and other LLM tasks |
+
+## 🔄 Data Flow
+
+1. **Extraction Flow**:
+   - `DataOrchestrator` requests data from `DataSourceFactory`
+   - Appropriate `PatentDataSource` implementation extracts raw data
+   - `RawPatentValidator` validates minimum data quality
+   - Data flows to processing pipeline
+
+2. **Processing Flow**:
+   - `DocumentExtractor` extracts structured content
+   - `DocumentStandardizer` normalizes to standard format
+   - `TextCleaner` normalizes text content
+   - `DocumentChunker` splits into optimal chunks
+   - `MetadataEnricher` enhances with computed fields
+
+3. **Storage Flow**:
+   - `PatentRepository` stores document content and metadata
+   - `EmbeddingManager` generates embeddings
+   - `VectorRepository` stores vector embeddings
+
+4. **Retrieval Flow**:
+   - `SearchService` handles search requests
+   - `VectorRepository` performs similarity search
+   - `PatentRepository` retrieves full documents
+   - Results combined and returned
+
+5. **Generation Flow**:
+   - `SearchService` retrieves relevant contexts
+   - `PromptManager` renders appropriate templates
+   - `LLMManager` generates responses
+   - `GenerationService` processes and returns results
+
+## 🔄 Dagster Integration Points
+
+| Dagster Component | Corresponding Architecture Component | Purpose |
+|-------------------|--------------------------------------|---------|
+| **Assets** | Document models, Embeddings | Define data entities in Dagster |
+| **Ops** | Processing Pipeline components | Individual processing steps |
+| **Jobs** | Complete processing workflows | End-to-end flows |
+| **Schedules** | Automated data updates | Regular data refreshes |
+| **Sensors** | New data detection | Trigger processing on new data |
+| **Resources** | Factories and Managers | Provide components to Dagster |
+
+## 📁 Project Structure
+
+```
+langechain/
+├── src/
+│   ├── config/                # Configuration management
+│   ├── models/                # Domain models and schemas
+│   ├── adapters/              # Source-specific adapters
+│   │   ├── epo/               # EPO-specific code
+│   │   └── uspto/             # USPTO-specific code
+│   ├── processors/            # Processing pipeline components
+│   ├── repositories/          # Data storage components
+│   ├── services/              # Business logic services
+│   ├── ai/                    # AI/ML components
+│   │   ├── embeddings/        # Embedding models
+│   │   └── llm/               # Language models
+│   └── utils/                 # Shared utilities
+├── dagster/                   # Dagster pipelines
+├── config/                    # Configuration files
+└── notebooks/                 # Interactive notebooks
+```
